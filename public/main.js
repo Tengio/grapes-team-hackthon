@@ -14,6 +14,14 @@ var broadphase;
 var solver;
 var physicsWorld;
 var gravityConstant = -9.8;
+var mouseCoords = new THREE.Vector2();
+var raycaster = new THREE.Raycaster();
+var clock = new THREE.Clock();
+var clickRequest = false;
+var ballMaterial = new THREE.MeshPhongMaterial( { color: 0x202020 } );
+var rigidBodies = [];
+var softBodies = [];
+var transformAux1 = new Ammo.btTransform();
 
 function init() {
     initGraphics();
@@ -34,7 +42,39 @@ function initPhysics() {
 }
 
 function initInput() {
+    window.addEventListener( 'mousedown', function( event ) {
+        if ( ! clickRequest ) {
+            mouseCoords.set(
+                ( event.clientX / window.innerWidth ) * 2 - 1,
+                - ( event.clientY / window.innerHeight ) * 2 + 1
+            );
+            clickRequest = true;
+        }
+    }, false );
+}
 
+function processClick() {
+    if ( clickRequest ) {
+        var pos = new THREE.Vector3();
+        raycaster.setFromCamera( mouseCoords, camera );
+        // Creates a ball
+        var ballMass = 3;
+        var ballRadius = 0.4;
+        var ball = new THREE.Mesh( new THREE.SphereGeometry( ballRadius, 18, 16 ), ballMaterial );
+        ball.castShadow = true;
+        ball.receiveShadow = true;
+        var ballShape = new Ammo.btSphereShape( ballRadius );
+        ballShape.setMargin( margin );
+        pos.copy( raycaster.ray.direction );
+        pos.add( raycaster.ray.origin );
+        quat.set( 0, 0, 0, 1 );
+        var ballBody = createRigidBody( ball, ballShape, ballMass, pos, quat );
+        ballBody.setFriction( 0.5 );
+        pos.copy( raycaster.ray.direction );
+        pos.multiplyScalar( 14 );
+        ballBody.setLinearVelocity( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+        clickRequest = false;
+    }
 }
 
 function initGraphics() {
@@ -46,8 +86,8 @@ function initGraphics() {
     camera.position.y = 5;
     camera.position.z =  8;
 
-    // controls = new THREE.OrbitControls( camera );
-    // controls.target.y = 2;
+    controls = new THREE.OrbitControls( camera );
+    controls.target.y = 2;
 
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor( 0xbfd1e5 );
@@ -90,11 +130,31 @@ function initGraphics() {
 
 
 function render() {
-    // var deltaTime = clock.getDelta();
-    // updatePhysics( deltaTime );
-    // processClick();
-    // controls.update( deltaTime );
+    var deltaTime = clock.getDelta();
+    updatePhysics( deltaTime );
+    processClick();
+    controls.update( deltaTime );
     renderer.render( scene, camera );
+}
+
+function updatePhysics(deltaTime) {
+    // Step world
+	physicsWorld.stepSimulation( deltaTime, 10 );
+    // Update rigid bodies
+    for ( var i = 0, il = rigidBodies.length; i < il; i++ ) {
+        var objThree = rigidBodies[ i ];
+        var objPhys = objThree.userData.physicsBody;
+        var ms = objPhys.getMotionState();
+        if ( ms ) {
+
+            ms.getWorldTransform( transformAux1 );
+            var p = transformAux1.getOrigin();
+            var q = transformAux1.getRotation();
+            objThree.position.set( p.x(), p.y(), p.z() );
+            objThree.quaternion.set( q.x(), q.y(), q.z(), q.w() );
+
+        }
+    }
 }
 
 function animate() {
