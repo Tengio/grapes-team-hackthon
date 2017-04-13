@@ -16,6 +16,7 @@ function initObjects() {
         ground.material.map = texture;
         ground.material.needsUpdate = true;
     } );
+    createTable();
 }
 
 
@@ -49,3 +50,39 @@ function createRigidBody( threeObject, physicsShape, mass, pos, quat ) {
     physicsWorld.addRigidBody( body );
     return body;
 }
+
+function createTable () {
+    // var manager = new THREE.LoadingManager();
+    var loader = new THREE.ColladaLoader();
+    loader.options.convertUpAxis = true;
+    loader.load('dae/table2.dae', function(collada) {
+        dae = collada.scene;
+        dae.castShadow = true;
+        dae.receiveShadow = true;
+
+        dae.position.set(10, 0, 0);
+           //dae.rotation.y = 45;
+        dae.scale.set(3, 3, 3);
+        scene.add(dae);
+
+    }, onProgress, onError );
+
+    loader.load('dae/table2.dae', function(collada) {
+        dae1 = collada.scene;
+        dae1.castShadow = true;
+        dae1.receiveShadow = true;
+        dae1.position.set(6, 0, 0);
+        dae1.scale.set(3, 3, 3);
+        scene.add(dae1);
+    });
+}
+
+var onProgress = function( xhr ) {
+    console.log(xhr);
+};
+
+var onError = function( xhr ) {
+    console.log(xhr);
+};
+
+
