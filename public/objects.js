@@ -16,7 +16,10 @@ function initObjects() {
         ground.material.map = texture;
         ground.material.needsUpdate = true;
     } );
-    createTable();
+    createTopTables();
+    createBottomTables();
+    createTopMonitors();
+    createBottomMonitors();
 }
 
 
@@ -51,18 +54,15 @@ function createRigidBody( threeObject, physicsShape, mass, pos, quat ) {
     return body;
 }
 
-function createTable () {
-    // var manager = new THREE.LoadingManager();
+function createTopTables () {
     var loader = new THREE.ColladaLoader();
     loader.options.convertUpAxis = true;
     loader.load('dae/table2.dae', function(collada) {
         dae = collada.scene;
         dae.castShadow = true;
         dae.receiveShadow = true;
-
-        dae.position.set(10, 0, 0);
-           //dae.rotation.y = 45;
-        dae.scale.set(3, 3, 3);
+        dae.position.set(-16, 0, -7);
+        dae.scale.set(5, 3, 4);
         scene.add(dae);
 
     }, onProgress, onError );
@@ -71,9 +71,137 @@ function createTable () {
         dae1 = collada.scene;
         dae1.castShadow = true;
         dae1.receiveShadow = true;
-        dae1.position.set(6, 0, 0);
+        dae1.position.set(-10, 0, -7);
+        dae1.scale.set(5, 3, 4);
+        scene.add(dae1);
+    });
+
+    loader.load('dae/table2.dae', function(collada) {
+        dae2 = collada.scene;
+        dae2.castShadow = true;
+        dae2.receiveShadow = true;
+        dae2.position.set(-4, 0, -7);
+        dae2.scale.set(5, 3, 4);
+        scene.add(dae2);
+    });
+
+    loader.load('dae/table2.dae', function(collada) {
+        dae3 = collada.scene;
+        dae3.castShadow = true;
+        dae3.receiveShadow = true;
+        dae3.position.set(2, 0, -7);
+        dae3.scale.set(5, 3, 4);
+        scene.add(dae3);
+    });
+}
+
+function createBottomTables () {
+    var loader = new THREE.ColladaLoader();
+    loader.options.convertUpAxis = true;
+    loader.load('dae/table2.dae', function(collada) {
+        dae = collada.scene;
+        dae.castShadow = true;
+        dae.receiveShadow = true;
+
+        dae.position.set(16, 0, 7);
+           //dae.rotation.y = 45;
+        dae.scale.set(5, 3, 4);
+        scene.add(dae);
+
+    }, onProgress, onError );
+
+    loader.load('dae/table2.dae', function(collada) {
+        dae1 = collada.scene;
+        dae1.castShadow = true;
+        dae1.receiveShadow = true;
+        dae1.position.set(10, 0, 7);
+        dae1.scale.set(5, 3, 4);
+        scene.add(dae1);
+    });
+
+    loader.load('dae/table2.dae', function(collada) {
+        dae2 = collada.scene;
+        dae2.castShadow = true;
+        dae2.receiveShadow = true;
+        dae2.position.set(4, 0, 7);
+        dae2.scale.set(5, 3, 4);
+        scene.add(dae2);
+    });
+}
+
+function createTopMonitors () {
+    var loader = new THREE.ColladaLoader();
+    loader.options.convertUpAxis = true;
+    loader.load('dae/monitor2.dae', function(collada) {
+        dae = collada.scene;
+        dae.castShadow = true;
+        dae.receiveShadow = true;
+        dae.position.set(-15, 1.53, -6);
+        dae.rotation.y = Math.PI;
+        dae.scale.set(3, 3, 3);
+        scene.add(dae);
+    }, onProgress, onError );
+
+    loader.load('dae/monitor2.dae', function(collada) {
+        dae1 = collada.scene;
+        dae1.castShadow = true;
+        dae1.receiveShadow = true;
+        dae1.position.set(-9, 1.53, -6);
+        dae1.rotation.y = Math.PI;
         dae1.scale.set(3, 3, 3);
         scene.add(dae1);
+    });
+
+    loader.load('dae/monitor2.dae', function(collada) {
+        dae2 = collada.scene;
+        dae2.castShadow = true;
+        dae2.receiveShadow = true;
+        dae2.position.set(-3, 1.53, -6);
+        dae2.rotation.y = Math.PI;
+        dae2.scale.set(3, 3, 3);
+        scene.add(dae2);
+    });
+
+    loader.load('dae/monitor2.dae', function(collada) {
+        dae3 = collada.scene;
+        dae3.castShadow = true;
+        dae3.receiveShadow = true;
+        dae3.position.set(3, 1.53, -6);
+        dae3.rotation.y = Math.PI;
+        dae3.scale.set(3, 3, 3);
+        scene.add(dae3);
+    });
+}
+
+function createBottomMonitors () {
+    var loader = new THREE.ColladaLoader();
+    loader.options.convertUpAxis = true;
+    loader.load('dae/monitor2.dae', function(collada) {
+        dae = collada.scene;
+        dae.castShadow = true;
+        dae.receiveShadow = true;
+        dae.position.set(15, 1.53, 6);
+           //dae.rotation.y = 45;
+        dae.scale.set(3, 3, 3);
+        scene.add(dae);
+    }, onProgress, onError );
+
+    loader.load('dae/monitor2.dae', function(collada) {
+        dae1 = collada.scene;
+        dae1.castShadow = true;
+        dae1.receiveShadow = true;
+        dae1.position.set(9, 1.53, 6);
+        dae1.scale.set(3, 3, 3);
+        scene.add(dae1);
+    });
+
+    loader.load('dae/monitor2.dae', function(collada) {
+        dae2 = collada.scene;
+        dae2.castShadow = true;
+        dae2.receiveShadow = true;
+        dae2.position.set(3, 1.53, 6);
+        dae2.scale.set(3, 3, 3);
+        scene.add(dae2);
     });
 }
 
