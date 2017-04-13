@@ -14,20 +14,37 @@
                 overflow: hidden;
             }
 
-            #info {
+            #score-board {
                 position: absolute;
-                top: 0px; width: 100%;
-                padding: 5px;
-            }
-
-            a {
-
-                color: #a06851;
+                top: 16px; 
+                right: 16px;
+                padding: 16px;
+                min-width:160px;
+                min-height:60px;
+                background-color: green;
+                color: white;
+                font-size:3em;
             }
         </style>
+        <script>
+            var countDownDate = new Date().getTime() + 60*1000;
+
+            // Update the count down every 1 second
+            var x = setInterval(function() {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+                var seconds = Math.round((distance % (1000 * 60)) / 1000);
+                document.getElementById("score-board").innerHTML = seconds + "s ";
+                if (distance < 0) { //?
+                    clearInterval(x);
+                    document.getElementById("score-board").innerHTML = "YOU LOOSE";
+                }
+            }, 1000);
+        </script>
     </head>
     <body>
-        <div id="container"><br /><br /><br /><br /><br />Loading...</div>
+        <div id="score-board"></div>
+        <div id="container"></div>
         <script src="https://threejs.org/build/three.js"></script>
         <!--<script src="js/loaders/OBJLoader.js"></script>-->
         <script src="https://threejs.org/examples/js/libs/ammo.js"></script>

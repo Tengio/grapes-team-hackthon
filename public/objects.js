@@ -7,7 +7,7 @@ function initObjects() {
     pos.set( 0, - 0.5, 0 );
     quat.set( 0, 0, 0, 1 );
     
-    var ground = createParalellepiped( 40, 1, 40, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
+    var ground = createParalellepiped( 37, 1, 37, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
     ground.castShadow = true;
     ground.receiveShadow = true;
     textureLoader.load( "img/floor.png", function( texture ) {
@@ -17,19 +17,24 @@ function initObjects() {
         ground.material.map = texture;
         ground.material.needsUpdate = true;
     } );
-    createSofa();
     createWalls();
-    createTopTables();
-    createBottomTables();
-    createTopMonitors();
-    createBottomMonitors();
-    createSoftBall();
-    
+    createSoftBalls();
+    createTarget();
 }
 
-function createSoftBall() {
-    var volumeMass = 15;
+function createTarget() {
+    pos.set( 15, -0.5, 15 );
+    createParalellepiped( 3, 1.1, 3, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFF0000 } ) );
+    pos.set( 15, -0.5, -15 );
+    createParalellepiped( 3, 1.1, 3, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFF0000 } ) );
+    pos.set( -15, -0.5, -15 );
+    createParalellepiped( 3, 1.1, 3, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFF0000 } ) );
+    pos.set( -15, -0.5, 15 );
+    createParalellepiped( 3, 1.1, 3, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFF0000 } ) );
+}
 
+function createSoftBalls() {
+    var volumeMass = 15;
     var sphereGeometry = new THREE.SphereBufferGeometry( 1.5, 40, 25 );
     sphereGeometry.translate( 5, 5, 0 );
     createSoftVolume( sphereGeometry, volumeMass, 250 );

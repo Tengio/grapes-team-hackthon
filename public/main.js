@@ -118,7 +118,7 @@ function initGraphics() {
 
     scene.add( light );
 
-    // container.innerHTML = "";
+    //container.innerHTML = "";
     container.appendChild( renderer.domElement );
 
     stats = new Stats();
@@ -138,9 +138,41 @@ function render() {
     renderer.render( scene, camera );
 }
 
+function checkForSuccess(volume) {
+    var position = volume.geometry.center()
+    console.log(position);
+    if(position.x > 14 && position.x<16) {
+        if(position.z > 14 && position.z<16) {
+            console.log("success");
+            document.getElementById( 'score-board' ).innerText = "You Win!";
+        }
+    }
+    if(position.x < -14 && position.x > -16) {
+        if(position.z < -14 && position.z > -16) {
+            console.log("success");
+            document.getElementById( 'score-board' ).innerText = "You Win!";
+        }
+    }
+    if(position.x > 14 && position.x<16) {
+        if(position.z < -14 && position.z > -16) {
+            console.log("success");
+            document.getElementById( 'score-board' ).innerText = "You Win!";
+        }
+    }
+    if(position.x < -14 && position.x > -16) {
+        if(position.z > 14 && position.z < 16) {
+            console.log("success");
+            document.getElementById( 'score-board' ).innerText = "You Win!";
+        }
+    }
+}
+
 function updatePhysics(deltaTime) {
     // Step world
 	physicsWorld.stepSimulation( deltaTime, 10 );
+
+    checkForSuccess(softBodies[0]);
+    
 
     // Update soft volumes
     for ( var i = 0, il = softBodies.length; i < il; i++ ) {
