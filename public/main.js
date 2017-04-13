@@ -22,6 +22,7 @@ var ballMaterial = new THREE.MeshPhongMaterial( { color: 0x202020 } );
 var rigidBodies = [];
 var softBodies = [];
 var transformAux1 = new Ammo.btTransform();
+var softBodyHelpers = new Ammo.btSoftBodyHelpers();
 
 function init() {
     initGraphics();
@@ -140,6 +141,49 @@ function render() {
 function updatePhysics(deltaTime) {
     // Step world
 	physicsWorld.stepSimulation( deltaTime, 10 );
+
+    // Update soft volumes
+    for ( var i = 0, il = softBodies.length; i < il; i++ ) {
+        var volume = softBodies[ i ];
+        var geometry = volume.geometry;
+        var softBody = volume.userData.physicsBody;
+        var volumePositions = geometry.attributes.position.array;
+        var volumeNormals = geometry.attributes.normal.array;
+        var association = geometry.ammoIndexAssociation;
+        var numVerts = association.length;
+        var nodes = softBody.get_m_nodes();
+        for ( var j = 0; j < numVerts; j ++ ) {
+
+            var node = nodes.at( j );
+            var nodePos = node.get_m_x();
+            var x = nodePos.x();
+            var y = nodePos.y();
+            var z = nodePos.z();
+            var nodeNormal = node.get_m_n();
+            var nx = nodeNormal.x();
+            var ny = nodeNormal.y();
+            var nz = nodeNormal.z();
+
+            var assocVertex = association[ j ];
+
+            for ( var k = 0, kl = assocVertex.length; k < kl; k++ ) {
+                var indexVertex = assocVertex[ k ];
+                volumePositions[ indexVertex ] = x;
+                volumeNormals[ indexVertex ] = nx;
+                indexVertex++;
+                volumePositions[ indexVertex ] = y;
+                volumeNormals[ indexVertex ] = ny;
+                indexVertex++;
+                volumePositions[ indexVertex ] = z;
+                volumeNormals[ indexVertex ] = nz;
+            }
+        }
+
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.normal.needsUpdate = true;
+
+    }
+
     // Update rigid bodies
     for ( var i = 0, il = rigidBodies.length; i < il; i++ ) {
         var objThree = rigidBodies[ i ];

@@ -23,8 +23,170 @@ function initObjects() {
     createBottomTables();
     createTopMonitors();
     createBottomMonitors();
+    createSoftBall();
     
 }
+
+function createSoftBall() {
+    var volumeMass = 15;
+
+    var sphereGeometry = new THREE.SphereBufferGeometry( 1.5, 40, 25 );
+    sphereGeometry.translate( 5, 5, 0 );
+    createSoftVolume( sphereGeometry, volumeMass, 250 );
+}
+
+function createSoftVolume( bufferGeom, mass, pressure ) {
+
+    processGeometry( bufferGeom );
+
+    var volume = new THREE.Mesh( bufferGeom, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
+    volume.castShadow = true;
+    volume.receiveShadow = true;
+    volume.frustumCulled = false;
+    scene.add( volume );
+
+    textureLoader.load( "img/colors.png", function( texture ) {
+        volume.material.map = texture;
+        volume.material.needsUpdate = true;
+    } );
+
+    // Volume physic object
+
+    var volumeSoftBody = softBodyHelpers.CreateFromTriMesh(
+        physicsWorld.getWorldInfo(),
+        bufferGeom.ammoVertices,
+        bufferGeom.ammoIndices,
+        bufferGeom.ammoIndices.length / 3,
+        true );
+
+    var sbConfig = volumeSoftBody.get_m_cfg();
+    sbConfig.set_viterations( 40 );
+    sbConfig.set_piterations( 40 );
+
+    // Soft-soft and soft-rigid collisions
+    sbConfig.set_collisions( 0x11 );
+
+    // Friction
+    sbConfig.set_kDF( 0.1 );
+    // Damping
+    sbConfig.set_kDP( 0.01 );
+    // Pressure
+    sbConfig.set_kPR( pressure );
+    // Stiffness
+    volumeSoftBody.get_m_materials().at( 0 ).set_m_kLST( 0.9 );
+    volumeSoftBody.get_m_materials().at( 0 ).set_m_kAST( 0.9 );
+
+    volumeSoftBody.setTotalMass( mass, false )
+    Ammo.castObject( volumeSoftBody, Ammo.btCollisionObject ).getCollisionShape().setMargin( margin );
+    physicsWorld.addSoftBody( volumeSoftBody, 1, -1 );
+    volume.userData.physicsBody = volumeSoftBody;
+    // Disable deactivation
+    volumeSoftBody.setActivationState( 4 );
+
+    softBodies.push( volume );
+
+}
+
+function processGeometry( bufGeometry ) {
+
+    // Obtain a Geometry
+    var geometry = new THREE.Geometry().fromBufferGeometry( bufGeometry );
+
+    // Merge the vertices so the triangle soup is converted to indexed triangles
+    var vertsDiff = geometry.mergeVertices();
+
+    // Convert again to BufferGeometry, indexed
+    var indexedBufferGeom = createIndexedBufferGeometryFromGeometry( geometry );
+
+    // Create index arrays mapping the indexed vertices to bufGeometry vertices
+    mapIndices( bufGeometry, indexedBufferGeom );
+
+}
+
+function mapIndices( bufGeometry, indexedBufferGeom ) {
+
+    // Creates ammoVertices, ammoIndices and ammoIndexAssociation in bufGeometry
+
+    var vertices = bufGeometry.attributes.position.array;
+    var idxVertices = indexedBufferGeom.attributes.position.array;
+    var indices = indexedBufferGeom.index.array;
+
+    var numIdxVertices = idxVertices.length / 3;
+    var numVertices = vertices.length / 3;
+
+    bufGeometry.ammoVertices = idxVertices;
+    bufGeometry.ammoIndices = indices;
+    bufGeometry.ammoIndexAssociation = [];
+
+    for ( var i = 0; i < numIdxVertices; i++ ) {
+
+        var association = [];
+        bufGeometry.ammoIndexAssociation.push( association );
+
+        var i3 = i * 3;
+
+        for ( var j = 0; j < numVertices; j++ ) {
+
+            var j3 = j * 3;
+            if ( isEqual( idxVertices[ i3 ], idxVertices[ i3 + 1 ],  idxVertices[ i3 + 2 ],
+                        vertices[ j3 ], vertices[ j3 + 1 ], vertices[ j3 + 2 ] ) ) {
+                association.push( j3 );
+            }
+
+        }
+
+    }
+
+}
+
+function createIndexedBufferGeometryFromGeometry( geometry ) {
+
+    var numVertices = geometry.vertices.length;
+    var numFaces = geometry.faces.length;
+
+    var bufferGeom = new THREE.BufferGeometry();
+    var vertices = new Float32Array( numVertices * 3 );
+    var indices = new ( numFaces * 3 > 65535 ? Uint32Array : Uint16Array )( numFaces * 3 );
+
+    for ( var i = 0; i < numVertices; i++ ) {
+
+        var p = geometry.vertices[ i ];
+
+        var i3 = i * 3;
+
+        vertices[ i3 ] = p.x;
+        vertices[ i3 + 1 ] = p.y;
+        vertices[ i3 + 2 ] = p.z;
+
+    }
+
+    for ( var i = 0; i < numFaces; i++ ) {
+
+        var f = geometry.faces[ i ];
+
+        var i3 = i * 3;
+
+        indices[ i3 ] = f.a;
+        indices[ i3 + 1 ] = f.b;
+        indices[ i3 + 2 ] = f.c;
+
+    }
+
+    bufferGeom.setIndex( new THREE.BufferAttribute( indices, 1 ) );
+    bufferGeom.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+
+    return bufferGeom;
+}
+
+function isEqual( x1, y1, z1, x2, y2, z2 ) {
+
+    var delta = 0.000001;
+    return Math.abs( x2 - x1 ) < delta &&
+        Math.abs( y2 - y1 ) < delta &&
+        Math.abs( z2 - z1 ) < delta;
+
+}
+
 
 function createWalls() {
     pos.set( 0, 5, 20 );
