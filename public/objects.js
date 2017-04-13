@@ -20,6 +20,7 @@ function initObjects() {
     createBottomTables();
     createTopMonitors();
     createBottomMonitors();
+    createSofa();
 }
 
 
@@ -102,9 +103,7 @@ function createBottomTables () {
         dae = collada.scene;
         dae.castShadow = true;
         dae.receiveShadow = true;
-
         dae.position.set(16, 0, 7);
-           //dae.rotation.y = 45;
         dae.scale.set(5, 3, 4);
         scene.add(dae);
 
@@ -181,7 +180,6 @@ function createBottomMonitors () {
         dae.castShadow = true;
         dae.receiveShadow = true;
         dae.position.set(15, 1.53, 6);
-           //dae.rotation.y = 45;
         dae.scale.set(3, 3, 3);
         scene.add(dae);
     }, onProgress, onError );
@@ -203,6 +201,21 @@ function createBottomMonitors () {
         dae2.scale.set(3, 3, 3);
         scene.add(dae2);
     });
+}
+
+function createSofa () {
+    var loader = new THREE.ColladaLoader();
+    loader.options.convertUpAxis = true;
+    loader.load('dae/sofa.dae', function(collada) {
+        dae = collada.scene;
+        dae.castShadow = true;
+        dae.receiveShadow = true;
+        dae.rotation.y = Math.PI / 2;
+        dae.position.set(-17, 0, 17);
+        dae.scale.set(0.9, 0.9, 0.9);
+        scene.add(dae);
+    }, onProgress, onError );
+
 }
 
 var onProgress = function( xhr ) {
