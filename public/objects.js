@@ -10,10 +10,10 @@ function initObjects() {
     var ground = createParalellepiped( 37, 1, 37, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
     ground.castShadow = true;
     ground.receiveShadow = true;
-    textureLoader.load( "img/floor.png", function( texture ) {
+    textureLoader.load( "img/floor.jpg", function( texture ) {
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set( 40, 40 );
+        texture.repeat.set( 30, 30 );
         ground.material.map = texture;
         ground.material.needsUpdate = true;
     } );
@@ -205,7 +205,7 @@ function createWalls() {
     textureLoader.load( "img/wall.jpg", function( texture ) {
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set( 20, 5 );
+        texture.repeat.set( 10, 2 );
         wall.material.map = texture;
         wall.material.needsUpdate = true;
         wall1.material.map = texture;
