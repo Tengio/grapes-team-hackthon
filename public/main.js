@@ -144,25 +144,25 @@ function checkForSuccess(volume) {
     if(position.x > 14 && position.x<16) {
         if(position.z > 14 && position.z<16) {
             console.log("success");
-            document.getElementById( 'score-board' ).innerText = "You Win!";
+            document.getElementById( 'score-board' ).innerHTML = "YOU WIN!";
         }
     }
     if(position.x < -14 && position.x > -16) {
         if(position.z < -14 && position.z > -16) {
             console.log("success");
-            document.getElementById( 'score-board' ).innerText = "You Win!";
+            document.getElementById( 'score-board' ).innerHTML = "YOU WIN!";
         }
     }
     if(position.x > 14 && position.x<16) {
         if(position.z < -14 && position.z > -16) {
             console.log("success");
-            document.getElementById( 'score-board' ).innerText = "You Win!";
+            document.getElementById( 'score-board' ).innerHTML = "YOU WIN!";
         }
     }
     if(position.x < -14 && position.x > -16) {
         if(position.z > 14 && position.z < 16) {
             console.log("success");
-            document.getElementById( 'score-board' ).innerText = "You Win!";
+            document.getElementById( 'score-board' ).innerHTML = "YOU WIN!";
         }
     }
 }
