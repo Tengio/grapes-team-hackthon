@@ -6,21 +6,50 @@ function initObjects() {
     // Ground
     pos.set( 0, - 0.5, 0 );
     quat.set( 0, 0, 0, 1 );
+    
     var ground = createParalellepiped( 40, 1, 40, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
     ground.castShadow = true;
     ground.receiveShadow = true;
-    textureLoader.load( "img/grid.png", function( texture ) {
+    textureLoader.load( "img/floor.png", function( texture ) {
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set( 40, 40 );
         ground.material.map = texture;
         ground.material.needsUpdate = true;
     } );
+    createSofa();
+    createWalls();
     createTopTables();
     createBottomTables();
     createTopMonitors();
     createBottomMonitors();
-    createSofa();
+    
+}
+
+function createWalls() {
+    pos.set( 0, 5, 20 );
+    var wall = createParalellepiped( 40, 10, 1, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
+    pos.set( 0, 5, -20 );
+    var wall1 = createParalellepiped( 40, 10, 1, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
+    pos.set( 20, 5, 0 );
+    var wall2 = createParalellepiped( 1, 10, 40, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
+    pos.set( -20, 5, 0 );
+    var wall3 = createParalellepiped( 1, 10, 40, 0, pos, quat, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ) );
+    textureLoader.load( "img/wall.jpg", function( texture ) {
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set( 20, 5 );
+        wall.material.map = texture;
+        wall.material.needsUpdate = true;
+        wall1.material.map = texture;
+        wall1.material.needsUpdate = true;
+        wall2.material.map = texture;
+        wall2.material.needsUpdate = true;
+        wall3.material.map = texture;
+        wall3.material.needsUpdate = true;
+    } );
+    pos.set( 0, - 0.5, 0 );
+    quat.set( 0, 0, 0, 1 );
 }
 
 
